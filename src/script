@@ -1,0 +1,112 @@
+"use strict";
+
+// https://builtbymax.de
+// Maximilian Kobus | KØBY
+(function () {
+  document.addEventListener('DOMContentLoaded', function () {
+    'use strict';
+
+    Ping.init();
+    conf.InfoBox();
+  });
+})();
+
+var Ping = {
+  init: function init() {
+    Ping.showBottomDetailContainer();
+    Ping.showChart();
+  },
+  showChart: function showChart() {
+    var ctx = document.getElementById('pingChart').getContext('2d');
+    var pingChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['Ping'],
+        datasets: [{
+          label: 'Ping Numbers',
+          data: [Math.round(Math.random() * 150)],
+          borderColor: '#FFF',
+          backgroundColor: 'transparent',
+          borderWidth: 2
+        }]
+      },
+      options: {
+        elements: {
+          point: {
+            radius: 0
+          }
+        },
+        legend: {
+          display: false
+        },
+        tooltips: {
+          callbacks: {
+            label: function label(tooltipItem) {
+              return tooltipItem.yLabel;
+            }
+          }
+        },
+        scales: {
+          xAxes: [{
+            display: false
+          }],
+          yAxes: [{
+            display: false,
+            ticks: {
+              beginAtZero: true
+            }
+          }]
+        }
+      }
+    });
+    Ping.chartUpdate(pingChart);
+  },
+  chartUpdate: function chartUpdate(chart) {
+    var num = conf.qS('[data-num]');
+    setInterval(function () {
+      var rNum = Math.round(Math.random() * 150),
+          label = 'Ping';
+      num.innerText = rNum;
+      num.classList.add('set');
+      setTimeout(function () {
+        num.classList.remove('set');
+      }, 450);
+      chart.data.labels.push(label);
+      chart.data.datasets.forEach(function (dataset) {
+        dataset.data.push(rNum);
+      });
+      chart.update();
+    }, 1000);
+  },
+  showBottomDetailContainer: function showBottomDetailContainer() {
+    var toggle = conf.qS('.ping-container .bottom-row .toggle');
+
+    toggle.onclick = function () {
+      toggle.nextElementSibling.classList.toggle('active');
+    };
+  }
+}; //  Config Functions
+// - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+var conf = {
+  qS: function qS(selector) {
+    return document.querySelector(selector);
+  },
+  qSA: function qSA(selector) {
+    return document.querySelectorAll(selector);
+  },
+  CqS: function CqS(container, selector) {
+    return container.querySelector(selector);
+  },
+  InfoBox: function InfoBox() {
+    var toggle = conf.qS('.infobox-container .infobox-toggle'),
+        detail = conf.qS('.infobox-container .infobox-detail-container');
+
+    if (toggle) {
+      toggle.onclick = function (e) {
+        e.preventDefault();
+        detail.classList.toggle('active');
+      };
+    }
+  }
+};
